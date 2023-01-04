@@ -1,0 +1,30 @@
+
+::-webkit-scrollbar,
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-thumb {
+    display: none;
+}
+
+canvas {
+    overflow: hidden;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #000000;
+}
+div {
+    position: relative;
+}
+
+.score {
+    position: fixed;
+    z-index: 10;
+    color: #ffffff;
+    margin-left: 10px;
+    top: 10px;
+    font-family: sans-serif;
+    font-size: 14px;
+}
