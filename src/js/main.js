@@ -156,6 +156,7 @@ function animate() {
     });
 
     invaderProjectiles.forEach((invaderProjectile, index) => {
+        // If invader projectile leaves the screen, remove it from computation.
         if (invaderProjectile.position.y + invaderProjectile.height >= canvas.height) {
             setTimeout(() => {
                 invaderProjectiles.splice(index, 1);
@@ -169,17 +170,18 @@ function animate() {
             && invaderProjectile.position.x + invaderProjectile.width >= player.position.x
             && invaderProjectile.position.x <= player.position.x + player.width) {
 
+            // Removes the player after being hit and triggers the end game sequence.
             setTimeout(() => {
                 invaderProjectiles.splice(index, 1);
                 player.opacity = 0;
                 game.over = true;
             }, 0);
 
+            // Continue execution for 2 seconds after the game ends.
             setTimeout(() => {
                 game.active = false;
             }, 2000);
             createParticles({object: player, color: 'white', fades: true});
-
         }
     });
 
@@ -214,6 +216,7 @@ function animate() {
                             (invader2) => invader2 === invader
                         );
 
+
                         const projectileFound = projectiles.find(
                             (projectile2) => projectile2 === projectile
                         );
@@ -223,14 +226,14 @@ function animate() {
                             score += 100;
                             scoreEl.innerHTML = score;
 
-                            createParticles({object: invader, fades: true});
+                            createParticles({object: invader, fades: true}); // Creates particles when an invader is hit.
 
-                            grid.invaders.splice(invaderIndex, 1);
+                            grid.invaders.splice(invaderIndex, 1); // Remove the invader from the array when a
                             projectiles.splice(projectileIndex, 1);
 
                             if (grid.invaders.length > 0) {
-                                const firstInvader = grid.invaders[0];
-                                const lastInvader = grid.invaders[grid.invaders.length - 1];
+                                const firstInvader = grid.invaders[0]; // Grabs the left most invader.
+                                const lastInvader = grid.invaders[grid.invaders.length - 1]; // Grabs the right most invader.
 
                                 // Adjusts the right side of each invader grid to account for invaders being removed.
                                 grid.width = lastInvader.position.x - firstInvader.position.x + lastInvader.width;

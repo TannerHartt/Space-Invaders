@@ -184,7 +184,7 @@ class Particle {
         this.radius = radius;
         this.color = color;
         this.opacity = 1;
-        this.fades = fades
+        this.fades = fades;
     }
 
     draw() {
