@@ -6,29 +6,7 @@ const c = canvas.getContext('2d');
 let projectiles = [];
 let invaderProjectiles = [];
 let particles = [];
-let bombs = [
-    new Bomb({
-        position: {
-            x: randomIntFromRange(Bomb.radius, canvas.width - Bomb.radius),
-            y: randomIntFromRange(Bomb.radius, canvas.height - Bomb.radius)
-        },
-        velocity: {
-            x: (Math.random() - 0.5) * 6,
-            y: (Math.random() - 0.5) * 6
-        }
-}),
-    new Bomb({
-        position: {
-            x: randomIntFromRange(Bomb.radius, canvas.width - Bomb.radius),
-            y: randomIntFromRange(Bomb.radius, canvas.height - Bomb.radius)
-        },
-        velocity: {
-            x: (Math.random() - 0.5) * 6,
-            y: (Math.random() - 0.5) * 6
-        }
-    })
-
-];
+let bombs = [];
 const player = new Player();
 const grids = [];
 let frames = 0;
@@ -70,9 +48,29 @@ function animate() {
     c.fillStyle = 'black';
     c.fillRect(0, 0, canvas.width, canvas.height);
 
+    if (frames % 200 === 0 && bombs.length < 3) {
+        bombs.push(
+            new Bomb({
+                position: {
+                    x: randomIntFromRange(Bomb.radius, canvas.width - Bomb.radius),
+                    y: randomIntFromRange(Bomb.radius, canvas.height - Bomb.radius)
+                },
+                velocity: {
+                    x: (Math.random() - 0.5) * 6,
+                    y: (Math.random() - 0.5) * 6
+                }
+            })
+        )
+    }
+
     for (let i = bombs.length - 1; i >= 0; i--) {
         const bomb = bombs[i];
-        bomb.update();
+
+        if (bomb.opacity <= 0) {
+            bombs.splice(i, 1)
+        } else {
+            bomb.update();
+        }
     }
 
     player.update();
@@ -126,23 +124,58 @@ function animate() {
     });
 
 
-    projectiles.forEach((projectile, index) => {
-        if (projectile.position.y + projectile.radius <= 0) {
-            setTimeout(() => {
+    for (let index = projectiles.length - 1; index >= 0; index--) {
+        const projectile = projectiles[index]; // Individual projectile
+
+        for (let bombIndex = bombs.length - 1; bombIndex >= 0; bombIndex--) {
+            const bomb = bombs[bombIndex];
+
+            // If bomb touches
+            if (Math.hypot(projectile.position.x - bomb.position.x, projectile.position.y - bomb.position.y) < projectile.radius + bomb.radius
+                && !bomb.active ) {
                 projectiles.splice(index, 1);
-            }, 0);
+                bomb.explode();
+
+            }
+        }
+
+        if (projectile.position.y + projectile.radius <= 0) {
+            projectiles.splice(index, 1);
         } else {
             projectile.update();
         }
-    });
+    }
 
     grids.forEach((grid, gridIndex) => {
         grid.update();
         if (frames % 100 === 0 && grid.invaders.length > 0) {
             grid.invaders[Math.floor(Math.random() * grid.invaders.length)].shoot(invaderProjectiles);
         }
-        grid.invaders.forEach((invader, invaderIndex) => {
+
+        for (let invaderIndex = grid.invaders.length - 1; invaderIndex >= 0; invaderIndex--) {
+            const invader = grid.invaders[invaderIndex];
+
             invader.update({velocity: grid.velocity});
+
+            // If bomb touches' invader, remove invader.
+            for (let bombIndex = bombs.length - 1; bombIndex >= 0; bombIndex--) {
+                const bomb = bombs[bombIndex];
+                const invaderRadius = 15;
+
+                // If bomb touches
+                if (
+                    Math.hypot(
+                        invader.position.x - bomb.position.x,
+                        invader.position.y - bomb.position.y) < invaderRadius + bomb.radius
+                        && bomb.active
+                ) {
+                    score += 50;
+                    scoreEl.innerHTML = score;
+                    grid.invaders.splice(invaderIndex, 1);
+                    createScoreLabel({object: invader, score: 50});
+                    createParticles({object: invader, fades: true});
+                }
+            }
 
             // Projectiles hit invader.
             projectiles.forEach((projectile, projectileIndex) => {
@@ -167,23 +200,7 @@ function animate() {
                             scoreEl.innerHTML = score;
 
                             // Create dynamic score labels
-                            const scoreLabel = document.createElement('label');
-                            scoreLabel.innerHTML = '100';
-                            scoreLabel.style.position = 'absolute';
-                            scoreLabel.style.color = 'white';
-                            scoreLabel.style.top = invader.position.y + 'px';
-                            scoreLabel.style.left = invader.position.x + 'px';
-                            scoreLabel.style.userSelect = 'none'; // Non-selectable
-                            document.querySelector('#parentDiv').appendChild(scoreLabel); // Append it to the DOM
-
-                            gsap.to(scoreLabel, { // Animating label
-                                opacity: 0,
-                                y: -30,
-                                duration: .75,
-                                onComplete: () => {
-                                    document.querySelector('#parentDiv').removeChild(scoreLabel); // Remove it from the DOM
-                                }
-                            });
+                            createScoreLabel({object: invader});
 
                             createParticles({object: invader, fades: true}); // Creates particles when an invader is hit.
 
@@ -206,7 +223,7 @@ function animate() {
                     }, 0);
                 }
             });
-        });
+        }
     });
 
     if (keys.a.pressed && player.position.x > 0) {
