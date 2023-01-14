@@ -7,6 +7,7 @@ let projectiles = [];
 let invaderProjectiles = [];
 let particles = [];
 let bombs = [];
+let powerUps = [];
 const player = new Player();
 const grids = [];
 let frames = 0;
@@ -48,6 +49,7 @@ function animate() {
     c.fillStyle = 'black';
     c.fillRect(0, 0, canvas.width, canvas.height);
 
+    // Spawns bombs
     if (frames % 200 === 0 && bombs.length < 3) {
         bombs.push(
             new Bomb({
@@ -61,6 +63,34 @@ function animate() {
                 }
             })
         )
+    }
+
+    // Spawns power ups
+    if (frames % 500 === 0 && powerUps.length < 3) {
+        powerUps.push(
+            new PowerUp({
+                position: {
+                    x: 0,
+                    y: Math.random() * 300 + PowerUp.radius
+                },
+                velocity: {
+                    x: 5,
+                    y: 0
+                }
+            })
+        );
+    }
+
+    // Rendering power ups on screen
+    for (let i = powerUps.length - 1; i >= 0; i--) {
+        const powerUp = powerUps[i];
+
+        // Power up garbage collection
+        if (powerUp.position.x - powerUp.radius >= canvas.width) {
+            powerUps.splice(i ,1);
+        } else {
+            powerUp.update();
+        }
     }
 
     for (let i = bombs.length - 1; i >= 0; i--) {
@@ -130,12 +160,33 @@ function animate() {
         for (let bombIndex = bombs.length - 1; bombIndex >= 0; bombIndex--) {
             const bomb = bombs[bombIndex];
 
-            // If bomb touches
+            // If projectile touches bomb
             if (Math.hypot(projectile.position.x - bomb.position.x, projectile.position.y - bomb.position.y) < projectile.radius + bomb.radius
                 && !bomb.active ) {
                 projectiles.splice(index, 1);
                 bomb.explode();
 
+            }
+        }
+
+
+        for (let i = powerUps.length - 1; i >= 0; i--) {
+            const powerUp = powerUps[i];
+
+            // If bomb touches
+            if (
+                Math.hypot(
+                    projectile.position.x - powerUp.position.x,
+                    projectile.position.y - powerUp.position.y
+                ) < projectile.radius + powerUp.radius
+            ){
+                projectiles.splice(index, 1);
+                powerUps.splice(i, 1);
+                player.powerUp = 'MachineGun';
+
+                setTimeout(() => { // Reset power up after 4s
+                   player.powerUp = '';
+                }, 4000); // 4s
             }
         }
 
@@ -242,6 +293,24 @@ function animate() {
         grids.push(new Grid());
         randomInterval = Math.floor((Math.random() * 500) + 500);
     }
+
+
+    if (keys.space.pressed && player.powerUp === 'MachineGun' && frames % 3 === 0) {
+        projectiles.push(
+            new Projectile({
+                position: {
+                    x: player.position.x + player.width / 2,
+                    y: player.position.y
+                },
+                velocity: {
+                    x: 0,
+                    y: -8
+                },
+                color: 'yellow'
+            })
+        );
+    }
+
     frames++;
 }
 
