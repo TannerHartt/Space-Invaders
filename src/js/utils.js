@@ -29,7 +29,6 @@ addEventListener('resize', () => {
 
 });
 
-
 addEventListener('keydown', ({key}) => {
   if (game.over) return;
 
@@ -74,7 +73,9 @@ addEventListener('keyup', ({key}) => {
   }
 });
 
-
+/**
+ * This function is responsible for spawning the background stars on the canvas.
+ */
 function spawnBackgroundStars() {
   for (let i = 0; i < 100; i++) {
     particles.push(
@@ -94,7 +95,13 @@ function spawnBackgroundStars() {
   }
 }
 
-function createParticles({object, color, fades}) {
+/**
+ * This function creates a particle effect at a target object's location and with a random x and y velocity.
+ * @param object Target object to spawn the particles at.
+ * @param color Desired color for the particles default is light pink.
+ * @param fades Boolean value that determines if the particles are to fade out.
+ */
+function createParticles({ object, color, fades }) {
   for (let i = 0; i < 15; i++) {
     particles.push(
         new Particle({
@@ -114,13 +121,20 @@ function createParticles({object, color, fades}) {
   }
 }
 
+/**
+ * This function is used to dynamically create score labels at the passed object's location and
+ * add them to the DOM. It applies necessary styles and then animates the label to fade away.
+ * After animation is complete, it removes it from the DOM (Garbage collection).
+ * @param score A desired score to apply to the label, default is 100.
+ * @param object The object you want to place the label on.
+ */
 function createScoreLabel({ score = '100', object }) {
-    const scoreLabel = document.createElement('label');
-    scoreLabel.innerHTML = score;
+    const scoreLabel = document.createElement('label'); // Create element
+    scoreLabel.innerHTML = score; // Update score on template
     scoreLabel.style.position = 'absolute';
-    scoreLabel.style.color = 'white';
-    scoreLabel.style.top = object.position.y + 'px';
-    scoreLabel.style.left = object.position.x + 'px';
+    scoreLabel.style.color = 'white'; // White text
+    scoreLabel.style.top = object.position.y + 'px'; // Object's y position
+    scoreLabel.style.left = object.position.x + 'px'; // Object's x position
     scoreLabel.style.userSelect = 'none'; // Non-selectable
     document.querySelector('#parentDiv').appendChild(scoreLabel); // Append it to the DOM
 
@@ -132,5 +146,5 @@ function createScoreLabel({ score = '100', object }) {
             document.querySelector('#parentDiv').removeChild(scoreLabel); // Remove it from the DOM
         }
     });
-
 }
+
