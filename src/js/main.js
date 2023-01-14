@@ -6,6 +6,29 @@ const c = canvas.getContext('2d');
 let projectiles = [];
 let invaderProjectiles = [];
 let particles = [];
+let bombs = [
+    new Bomb({
+        position: {
+            x: randomIntFromRange(Bomb.radius, canvas.width - Bomb.radius),
+            y: randomIntFromRange(Bomb.radius, canvas.height - Bomb.radius)
+        },
+        velocity: {
+            x: (Math.random() - 0.5) * 6,
+            y: (Math.random() - 0.5) * 6
+        }
+}),
+    new Bomb({
+        position: {
+            x: randomIntFromRange(Bomb.radius, canvas.width - Bomb.radius),
+            y: randomIntFromRange(Bomb.radius, canvas.height - Bomb.radius)
+        },
+        velocity: {
+            x: (Math.random() - 0.5) * 6,
+            y: (Math.random() - 0.5) * 6
+        }
+    })
+
+];
 const player = new Player();
 const grids = [];
 let frames = 0;
@@ -24,17 +47,6 @@ const mouse = {
     y: innerHeight / 2
 }
 
-// Event Listeners
-addEventListener('mousemove', (event) => {
-    mouse.x = event.clientX
-    mouse.y = event.clientY
-});
-
-addEventListener('resize', () => {
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
-
-});
 
 const keys = {
     a: {
@@ -48,83 +60,6 @@ const keys = {
     }
 }
 
-addEventListener('keydown', ({key}) => {
-    if (game.over) return;
-
-    switch (key) {
-        case 'a':
-            keys.a.pressed = true;
-            break;
-        case 'd':
-            keys.d.pressed = true;
-            break;
-        case ' ':
-            projectiles.push(
-                new Projectile({
-                    position: {
-                        x: player.position.x + player.width / 2,
-                        y: player.position.y
-                    },
-                    velocity: {
-                        x: 0,
-                        y: -8
-                    }
-                })
-            );
-            break;
-    }
-});
-
-addEventListener('keyup', ({key}) => {
-    switch (key) {
-        case 'a':
-            keys.a.pressed = false;
-            break;
-        case 'd':
-            keys.d.pressed = false;
-            break;
-    }
-});
-
-
-function spawnBackgroundStars() {
-    for (let i = 0; i < 100; i++) {
-        particles.push(
-            new Particle({
-                position: {
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height
-                },
-                velocity: {
-                    x: 0,
-                    y: 0.4
-                },
-                radius: Math.random() * 2,
-                color: 'white'
-            })
-        );
-    }
-}
-
-function createParticles({object, color, fades}) {
-    for (let i = 0; i < 15; i++) {
-        particles.push(
-            new Particle({
-                position: {
-                    x: object.position.x + object.width / 2,
-                    y: object.position.y + object.height / 2
-                },
-                velocity: {
-                    x: (Math.random() - 0.5) * 2,
-                    y: (Math.random() - 0.5) * 2
-                },
-                radius: Math.random() * 3,
-                color: color || '#BAA0DE',
-                fades: fades
-            })
-        );
-    }
-}
 
 // Animation Loop
 function animate() {
@@ -134,6 +69,11 @@ function animate() {
     requestAnimationFrame(animate);
     c.fillStyle = 'black';
     c.fillRect(0, 0, canvas.width, canvas.height);
+
+    for (let i = bombs.length - 1; i >= 0; i--) {
+        const bomb = bombs[i];
+        bomb.update();
+    }
 
     player.update();
 
@@ -233,22 +173,22 @@ function animate() {
                             scoreLabel.style.color = 'white';
                             scoreLabel.style.top = invader.position.y + 'px';
                             scoreLabel.style.left = invader.position.x + 'px';
-                            scoreLabel.style.userSelect = 'none';
-                            document.querySelector('#parentDiv').appendChild(scoreLabel);
+                            scoreLabel.style.userSelect = 'none'; // Non-selectable
+                            document.querySelector('#parentDiv').appendChild(scoreLabel); // Append it to the DOM
 
                             gsap.to(scoreLabel, { // Animating label
                                 opacity: 0,
                                 y: -30,
                                 duration: .75,
                                 onComplete: () => {
-                                    document.querySelector('#parentDiv').removeChild(scoreLabel);
+                                    document.querySelector('#parentDiv').removeChild(scoreLabel); // Remove it from the DOM
                                 }
                             });
 
                             createParticles({object: invader, fades: true}); // Creates particles when an invader is hit.
 
-                            grid.invaders.splice(invaderIndex, 1); // Remove the invader from the array when a
-                            projectiles.splice(projectileIndex, 1);
+                            grid.invaders.splice(invaderIndex, 1); // Remove the invader from computation
+                            projectiles.splice(projectileIndex, 1); // Remove the bullet from computation
 
                             if (grid.invaders.length > 0) {
                                 const firstInvader = grid.invaders[0]; // Grabs the left most invader.
