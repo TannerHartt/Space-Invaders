@@ -63,7 +63,8 @@ class Projectile {
 }
 
 class Invader {
-    constructor({position}) {
+    static radius = 15;
+    constructor({ position }) {
         const image = new Image();
         image.src = './img/invader.png';
         image.onload = () => {
@@ -158,7 +159,7 @@ class Grid {
 }
 
 class InvaderProjectile {
-    constructor({position, velocity}) {
+    constructor({ position, velocity }) {
         this.position = position;
         this.velocity = velocity;
 
@@ -179,7 +180,7 @@ class InvaderProjectile {
 }
 
 class Particle {
-    constructor({position, velocity, radius, color, fades}) {
+    constructor({ position, velocity, radius, color, fades }) {
         this.position = position;
         this.velocity = velocity;
         this.radius = radius;
