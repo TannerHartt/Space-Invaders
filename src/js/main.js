@@ -26,7 +26,6 @@ const mouse = {
     y: innerHeight / 2
 }
 
-
 const keys = {
     a: {
         pressed: false
@@ -45,7 +44,7 @@ function animate() {
     // If the game is not active, return immediately and do not animate.
     if (!game.active) return;
 
-    requestAnimationFrame(animate);
+    requestAnimationFrame(animate); // Begin animation
     c.fillStyle = 'black';
     c.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -66,7 +65,7 @@ function animate() {
     }
 
     // Spawns power ups
-    if (frames % 500 === 0 && powerUps.length < 3) {
+    if (frames % 500 === 0) {
         powerUps.push(
             new PowerUp({
                 position: {
@@ -74,7 +73,7 @@ function animate() {
                     y: Math.random() * 300 + PowerUp.radius
                 },
                 velocity: {
-                    x: 5,
+                    x: 4,
                     y: 0
                 }
             })
@@ -153,7 +152,7 @@ function animate() {
         }
     });
 
-
+    // Looping through all projectiles to track collisions
     for (let index = projectiles.length - 1; index >= 0; index--) {
         const projectile = projectiles[index]; // Individual projectile
 
@@ -165,7 +164,6 @@ function animate() {
                 && !bomb.active ) {
                 projectiles.splice(index, 1);
                 bomb.explode();
-
             }
         }
 
@@ -173,7 +171,7 @@ function animate() {
         for (let i = powerUps.length - 1; i >= 0; i--) {
             const powerUp = powerUps[i];
 
-            // If bomb touches
+            // If projectile hits power up object
             if (
                 Math.hypot(
                     projectile.position.x - powerUp.position.x,
@@ -185,7 +183,7 @@ function animate() {
                 player.powerUp = 'MachineGun';
 
                 setTimeout(() => { // Reset power up after 4s
-                   player.powerUp = '';
+                   player.powerUp = null;
                 }, 4000); // 4s
             }
         }
@@ -208,12 +206,12 @@ function animate() {
 
             invader.update({velocity: grid.velocity});
 
-            // If bomb touches' invader, remove invader.
+            // Looping through all bombs to track collisions with invaders and projectiles.
             for (let bombIndex = bombs.length - 1; bombIndex >= 0; bombIndex--) {
                 const bomb = bombs[bombIndex];
                 const invaderRadius = 15;
 
-                // If bomb touches
+                // If bomb touches' invader, remove invader.
                 if (
                     Math.hypot(
                         invader.position.x - bomb.position.x,
@@ -223,23 +221,24 @@ function animate() {
                     score += 50;
                     scoreEl.innerHTML = score;
                     grid.invaders.splice(invaderIndex, 1);
-                    createScoreLabel({object: invader, score: 50});
-                    createParticles({object: invader, fades: true});
+                    createScoreLabel({ object: invader, score: 50 });
+                    createParticles({ object: invader, fades: true });
                 }
             }
 
             // Projectiles hit invader.
             projectiles.forEach((projectile, projectileIndex) => {
+                // If projectile hits invader
                 if (projectile.position.y - projectile.radius <= invader.position.y + invader.height
                     && projectile.position.x + projectile.radius >= invader.position.x
                     && projectile.position.x - projectile.radius <= invader.position.x + invader.width
                     && projectile.position.y + projectile.radius >= invader.position.y) {
 
                     setTimeout(() => {
+
                         const invaderFound = grid.invaders.find(
                             (invader2) => invader2 === invader
                         );
-
 
                         const projectileFound = projectiles.find(
                             (projectile2) => projectile2 === projectile
@@ -277,25 +276,26 @@ function animate() {
         }
     });
 
+    // Controls player side-to-side movement and animation
     if (keys.a.pressed && player.position.x > 0) {
-        player.velocity.x = -5;
-        player.rotation = -0.15;
+        player.velocity.x = -5; // Move player left
+        player.rotation = -0.15; // Slight rotation left
     } else if (keys.d.pressed && player.position.x + player.width <= canvas.width) {
-        player.velocity.x = 5;
-        player.rotation = 0.15;
+        player.velocity.x = 5; // Move player right
+        player.rotation = 0.15; // Slight rotation right
     } else {
-        player.velocity.x = 0;
-        player.rotation = 0;
+        player.velocity.x = 0; // No movement
+        player.rotation = 0; // No rotation
     }
 
     // Spawning invader grids randomly
     if (frames % randomInterval === 0) {
-        grids.push(new Grid());
-        randomInterval = Math.floor((Math.random() * 500) + 500);
+        grids.push(new Grid()); // Create new grid of invaders
+        randomInterval = Math.floor((Math.random() * 500) + 500); // Set the next random interval
     }
 
-
-    if (keys.space.pressed && player.powerUp === 'MachineGun' && frames % 3 === 0) {
+    // TODO fix bug where power up is always active.
+    if (keys.space.pressed && player.powerUp === 'MachineGun' && frames % 3 === 0 && !game.over) {
         projectiles.push(
             new Projectile({
                 position: {
@@ -310,7 +310,6 @@ function animate() {
             })
         );
     }
-
     frames++;
 }
 

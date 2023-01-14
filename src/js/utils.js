@@ -9,6 +9,15 @@ function randomColor(colors) {
   return colors[Math.floor(Math.random() * colors.length)];
 }
 
+/**
+ * This function calculates the distance between two objects using pythagorean theorem.
+ * Pass in the center of the object for best results.
+ * @param x1 Object 1 x position.
+ * @param y1 Object 1 y position.
+ * @param x2 Object 2 x position.
+ * @param y2 Object 2 y position.
+ * @returns {number} // The distance between the two objects.
+ */
 function distance(x1, y1, x2, y2) {
   const xDist = x2 - x1;
   const yDist = y2 - y1;
@@ -29,7 +38,7 @@ addEventListener('resize', () => {
 
 });
 
-addEventListener('keydown', ({key}) => {
+addEventListener('keydown', ({ key }) => {
   if (game.over) return;
 
   switch (key) {
@@ -59,7 +68,7 @@ addEventListener('keydown', ({key}) => {
   }
 });
 
-addEventListener('keyup', ({key}) => {
+addEventListener('keyup', ({ key }) => {
   switch (key) {
         case 'a':
             keys.a.pressed = false;
