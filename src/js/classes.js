@@ -214,16 +214,25 @@ class Bomb {
     constructor({ position, velocity, color = 'red' }) {
         this.position = position;
         this.velocity = velocity;
-        this.radius = 30;
+        this.radius = 0;
         this.color = color;
+        this.opacity = 1;
+        this.active = false;
+
+        gsap.to(this, {
+           radius: 30
+        });
     }
 
     draw() {
+        c.save();
+        c.globalAlpha = this.opacity;
         c.beginPath();
         c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2, false);
         c.fillStyle = this.color;
         c.fill();
         c.closePath()
+        c.restore();
     }
 
     update() {
@@ -237,5 +246,22 @@ class Bomb {
         } else if (this.position.y + this.radius + this.velocity.y >= canvas.height || this.position.y - this.radius + this.velocity.y <= 0) {
             this.velocity.y = -this.velocity.y;
         }
+    }
+
+    explode() {
+        this.active = true;
+        this.velocity.x = 0;
+        this.velocity.y = 0;
+
+        gsap.to(this, {
+            radius: 170,
+            color: 'white',
+        });
+
+        gsap.to(this, {
+            delay: .1,
+            opacity: 0,
+            duration: .15
+        });
     }
 }
