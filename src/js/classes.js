@@ -11,6 +11,7 @@ class Player {
                 x: canvas.width / 2 - this.width / 2,
                 y: canvas.height - this.height - 30
             }
+            this.powerUp = '';
         }
 
         this.velocity = {
