@@ -1,6 +1,6 @@
 const canvas = document.querySelector('canvas');
-const scoreEl = document.getElementById('scoreEl');
 const c = canvas.getContext('2d');
+const scoreEl = document.getElementById('scoreEl');
 
 // Implementation
 let projectiles = [];
@@ -61,7 +61,7 @@ function animate() {
                     y: (Math.random() - 0.5) * 6
                 }
             })
-        )
+        );
     }
 
     // Spawns power ups
@@ -86,9 +86,9 @@ function animate() {
 
         // Power up garbage collection
         if (powerUp.position.x - powerUp.radius >= canvas.width) {
-            powerUps.splice(i ,1);
+            powerUps.splice(i ,1); // Remove from computation
         } else {
-            powerUp.update();
+            powerUp.update(); // Draw power up
         }
     }
 
@@ -96,7 +96,7 @@ function animate() {
         const bomb = bombs[i];
 
         if (bomb.opacity <= 0) {
-            bombs.splice(i, 1)
+            bombs.splice(i, 1);
         } else {
             bomb.update();
         }
@@ -148,7 +148,7 @@ function animate() {
             setTimeout(() => {
                 game.active = false;
             }, 2000);
-            createParticles({object: player, color: 'white', fades: true});
+            createParticles({ object: player, color: 'white', fades: true });
         }
     });
 
@@ -160,31 +160,35 @@ function animate() {
             const bomb = bombs[bombIndex];
 
             // If projectile touches bomb
-            if (Math.hypot(projectile.position.x - bomb.position.x, projectile.position.y - bomb.position.y) < projectile.radius + bomb.radius
-                && !bomb.active ) {
+            if (checkCircleToCircleCollision({
+                circle1: projectile,
+                circle2: bomb,
+                circle1Radius: projectile.radius
+            }) && !bomb.active) {
+
                 projectiles.splice(index, 1);
                 bomb.explode();
             }
         }
 
 
-        for (let i = powerUps.length - 1; i >= 0; i--) {
-            const powerUp = powerUps[i];
+        for (let j = powerUps.length - 1; j >= 0; j--) {
+            const powerUp = powerUps[j];
 
             // If projectile hits power up object
-            if (
-                Math.hypot(
-                    projectile.position.x - powerUp.position.x,
-                    projectile.position.y - powerUp.position.y
-                ) < projectile.radius + powerUp.radius
+            if (checkCircleToCircleCollision({
+                circle1: projectile,
+                circle2: powerUp,
+                circle1Radius: projectile.radius
+            })
             ){
-                projectiles.splice(index, 1);
-                powerUps.splice(i, 1);
-                player.powerUp = 'MachineGun';
+                projectiles.splice(index, 1); // Remove the projectile from the game
+                powerUps.splice(j, 1); // Remove the power up from the game
+                player.powerUp = 'MachineGun'; // Give player power up
 
-                setTimeout(() => { // Reset power up after 4s
-                   player.powerUp = null;
-                }, 4000); // 4s
+                setTimeout(() => {
+                   player.powerUp = ''; // Reset power up property
+                }, 5000); // After 4s
             }
         }
 
@@ -212,11 +216,11 @@ function animate() {
                 const invaderRadius = 15;
 
                 // If bomb touches' invader, remove invader.
-                if (
-                    Math.hypot(
-                        invader.position.x - bomb.position.x,
-                        invader.position.y - bomb.position.y) < invaderRadius + bomb.radius
-                        && bomb.active
+                if (checkCircleToCircleCollision({
+                        circle1: invader,
+                        circle2: bomb,
+                        circle1Radius: invaderRadius
+                }) && bomb.active
                 ) {
                     score += 50;
                     scoreEl.innerHTML = score;
@@ -295,6 +299,7 @@ function animate() {
     }
 
     // TODO fix bug where power up is always active.
+    // Verified
     if (keys.space.pressed && player.powerUp === 'MachineGun' && frames % 3 === 0 && !game.over) {
         projectiles.push(
             new Projectile({
