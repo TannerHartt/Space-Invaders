@@ -62,6 +62,25 @@ addEventListener('keyup', ({ key }) => {
   }
 });
 
+startButton.addEventListener('click', () => {
+    document.getElementById('startMenu').style.display = 'none';
+    document.getElementById('startMenu').style.userSelect = 'none';
+    init();
+    spawnBackgroundStars();
+    animate();
+});
+
+restartButton.addEventListener('click', () => {
+    document.querySelector('#endGameMenu').style.display = 'none';
+    document.getElementById('endGameMenu').style.userSelect = 'none';
+    scoreEl.style.display = 'block';
+    init();
+    spawnBackgroundStars();
+    animate();
+});
+
+
+
 /**
  * This function is responsible for spawning the background stars on the canvas.
  */
@@ -171,11 +190,11 @@ function endGame() {
         game.over = true;
     }, 0);
 
-    // stops game altogether
+    // stops game computation
     setTimeout(() => {
         game.active = false;
-        // document.querySelector('#restartScreen').style.display = 'flex';
-        // document.querySelector('#finalScore').innerHTML = score;
+        document.getElementById('endGameMenu').style.display = 'flex';
+        scoreEl.innerHTML = score;
     }, 2000);
 
     createParticles({
