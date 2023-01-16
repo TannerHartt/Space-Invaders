@@ -157,7 +157,15 @@ function createScoreLabel({ score = '100', object }) {
     });
 }
 
-function checkCircleToCircleCollision({ circle1, circle2, circle1Radius }) {
+/**
+ * This function handles the calculation of circle object to circle object collisions.
+ * It takes in two circle objects and a radius of the first circle.
+ * Both objects must have an x and y coordinates and a radius value
+ * @param circle1 First circle object
+ * @param circle2 Second circle object
+ * @param circle1Radius Optional circle value for if the first circle object doesn't have a radius property.
+ */
+function checkCircleToCircleCollision({ circle1, circle2, circle1Radius = circle1.radius }) {
     return (
         Math.hypot(
         circle1.position.x - circle2.position.x,
