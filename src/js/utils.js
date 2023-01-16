@@ -1,13 +1,6 @@
 function randomIntFromRange(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
-function randomHue() {
-  return `hsl(${Math.random()}, 50%, 50%)`;
-}
-
-function randomColor(colors) {
-  return colors[Math.floor(Math.random() * colors.length)];
-}
 
 /**
  * This function calculates the distance between two objects using pythagorean theorem.
@@ -24,19 +17,6 @@ function distance(x1, y1, x2, y2) {
 
   return Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2));
 }
-
-
-// Event Listeners
-addEventListener('mousemove', (event) => {
-  mouse.x = event.clientX
-  mouse.y = event.clientY
-});
-
-addEventListener('resize', () => {
-  canvas.width = innerWidth;
-  canvas.height = innerHeight;
-
-});
 
 addEventListener('keydown', ({ key }) => {
   if (game.over) return;
@@ -170,4 +150,37 @@ function checkCircleToCircleCollision({ circle1, circle2, circle1Radius = circle
         Math.hypot(
         circle1.position.x - circle2.position.x,
         circle1.position.y - circle2.position.y) < circle1Radius + circle2.radius)
+}
+
+function checkRectangularCollision({ rectangle1, rectangle2 }) {
+ return (rectangle1.position.y + rectangle1.height >= rectangle2.position.y
+     && rectangle1.position.x + rectangle1.width >= rectangle2.position.x
+     && rectangle1.position.x <= rectangle2.position.x + rectangle2.width)
+}
+
+/**
+ * This function ends the game, removes the player and creates particle effects.
+ */
+function endGame() {
+    console.log('you lose');
+    // audio.gameOver.play();
+
+    // Makes player disappear
+    setTimeout(() => {
+        player.opacity = 0;
+        game.over = true;
+    }, 0);
+
+    // stops game altogether
+    setTimeout(() => {
+        game.active = false;
+        // document.querySelector('#restartScreen').style.display = 'flex';
+        // document.querySelector('#finalScore').innerHTML = score;
+    }, 2000);
+
+    createParticles({
+        object: player,
+        color: 'white',
+        fades: true
+    });
 }
