@@ -130,7 +130,12 @@ function animate() {
 
     player.update();
 
-    //
+    for (let i = player.particles.length - 1; i >=0 ; i--) {
+        const playerParticle = player.particles[i];
+        playerParticle.update();
+    }
+
+
     particles.forEach((particle, particleIndex) => {
 
         // If background star particles reach the bottom of the screen.
