@@ -9,7 +9,7 @@ let particles = [];
 let bombs = [];
 let powerUps = [];
 const player = new Player();
-const grids = [];
+let grids = [];
 let frames = 0;
 let randomInterval = Math.floor((Math.random() * 500) + 500);
 let game = {
@@ -17,16 +17,13 @@ let game = {
     active: true
 }
 let score = 0;
+let spawnInterval = 500;
 
 canvas.width = 1024;
 canvas.height = 576;
 
-const mouse = {
-    x: innerWidth / 2,
-    y: innerHeight / 2
-}
 
-const keys = {
+let keys = {
     a: {
         pressed: false
     },
@@ -35,6 +32,35 @@ const keys = {
     },
     space: {
         pressed: false
+    }
+}
+
+function init() { // Initialization, reset all game variables.
+    projectiles = [];
+    invaderProjectiles = [];
+    particles = [];
+    bombs = [];
+    powerUps = [];
+    grids = [];
+    score = 0;
+    frames = 0;
+    randomInterval = Math.floor((Math.random() * 500) + 500);
+
+    keys = {
+        a: {
+            pressed: false
+        },
+        d: {
+            pressed: false
+        },
+        space: {
+            pressed: false
+        }
+    }
+
+    game = {
+        over: false,
+        active: true
     }
 }
 
@@ -88,7 +114,7 @@ function animate() {
         if (powerUp.position.x - powerUp.radius >= canvas.width) {
             powerUps.splice(i ,1); // Remove from computation
         } else {
-            powerUp.update(); // Draw power up
+            powerUp.update(); // Animate power up
         }
     }
 
@@ -133,22 +159,10 @@ function animate() {
         }
 
         // Game over, enemy projectile hits player.
-        if (invaderProjectile.position.y + invaderProjectile.height >= player.position.y
-            && invaderProjectile.position.x + invaderProjectile.width >= player.position.x
-            && invaderProjectile.position.x <= player.position.x + player.width) {
-
-            // Removes the player after being hit and triggers the end game sequence.
-            setTimeout(() => {
-                invaderProjectiles.splice(index, 1);
-                player.opacity = 0;
-                game.over = true;
-            }, 0);
-
-            // Continue execution for 2 seconds after the game ends.
-            setTimeout(() => {
-                game.active = false;
-            }, 2000);
-            createParticles({ object: player, color: 'white', fades: true });
+        if (checkRectangularCollision({ rectangle1: invaderProjectile, rectangle2: player }))
+        {
+            invaderProjectiles.splice(index, 1);
+            endGame();
         }
     });
 
@@ -208,7 +222,7 @@ function animate() {
         for (let invaderIndex = grid.invaders.length - 1; invaderIndex >= 0; invaderIndex--) {
             const invader = grid.invaders[invaderIndex];
 
-            invader.update({velocity: grid.velocity});
+            invader.update({ velocity: grid.velocity });
 
             // Looping through all bombs to track collisions with invaders and projectiles.
             for (let bombIndex = bombs.length - 1; bombIndex >= 0; bombIndex--) {
@@ -216,11 +230,10 @@ function animate() {
                 const invaderRadius = 15;
 
                 // If bomb touches' invader, remove invader.
-                if (checkCircleToCircleCollision({
-                        circle1: invader,
-                        circle2: bomb,
-                        circle1Radius: invaderRadius
-                }) && bomb.active
+                if (Math.hypot(
+                    invader.position.x - bomb.position.x,
+                    invader.position.y - bomb.position.y) < invaderRadius + bomb.radius
+                    && bomb.active
                 ) {
                     score += 50;
                     scoreEl.innerHTML = score;
@@ -254,9 +267,8 @@ function animate() {
                             scoreEl.innerHTML = score;
 
                             // Create dynamic score labels
-                            createScoreLabel({object: invader});
-
-                            createParticles({object: invader, fades: true}); // Creates particles when an invader is hit.
+                            createScoreLabel({ object: invader });
+                            createParticles({ object: invader, fades: true }); // Creates particles when an invader is hit.
 
                             grid.invaders.splice(invaderIndex, 1); // Remove the invader from computation
                             projectiles.splice(projectileIndex, 1); // Remove the bullet from computation
@@ -277,7 +289,13 @@ function animate() {
                     }, 0);
                 }
             });
-        }
+
+            // Remove player if invader touches
+            if (checkRectangularCollision({ rectangle1: invader, rectangle2: player }) && !game.over)
+            {
+                endGame();
+            }
+        } // End of invader grid loop
     });
 
     // Controls player side-to-side movement and animation
@@ -294,8 +312,11 @@ function animate() {
 
     // Spawning invader grids randomly
     if (frames % randomInterval === 0) {
+        spawnInterval = spawnInterval < 0 ? 100 : spawnInterval;
         grids.push(new Grid()); // Create new grid of invaders
-        randomInterval = Math.floor((Math.random() * 500) + 500); // Set the next random interval
+        randomInterval = Math.floor((Math.random() * 500) + spawnInterval); // Set the next random interval
+        frames = 0;
+        spawnInterval -= 100;
     }
 
     // TODO fix bug where power up is always active.
@@ -318,5 +339,6 @@ function animate() {
     frames++;
 }
 
+init();
 spawnBackgroundStars();
 animate();
