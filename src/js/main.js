@@ -1,14 +1,16 @@
 const canvas = document.querySelector('canvas');
 const c = canvas.getContext('2d');
 const scoreEl = document.getElementById('scoreEl');
+const startButton = document.getElementById('startButton');
+const restartButton = document.getElementById('restartButton');
 
 // Implementation
+let player = new Player();
 let projectiles = [];
 let invaderProjectiles = [];
 let particles = [];
 let bombs = [];
 let powerUps = [];
-const player = new Player();
 let grids = [];
 let frames = 0;
 let randomInterval = Math.floor((Math.random() * 500) + 500);
@@ -36,6 +38,11 @@ let keys = {
 }
 
 function init() { // Initialization, reset all game variables.
+    game = {
+        over: false,
+        active: true
+    }
+    player = new Player();
     projectiles = [];
     invaderProjectiles = [];
     particles = [];
@@ -56,11 +63,6 @@ function init() { // Initialization, reset all game variables.
         space: {
             pressed: false
         }
-    }
-
-    game = {
-        over: false,
-        active: true
     }
 }
 
@@ -133,6 +135,8 @@ function animate() {
     for (let i = player.particles.length - 1; i >=0 ; i--) {
         const playerParticle = player.particles[i];
         playerParticle.update();
+
+        if (playerParticle.opacity === 0) player.particles.splice(i, 1);
     }
 
 
@@ -346,4 +350,4 @@ function animate() {
 
 init();
 spawnBackgroundStars();
-animate();
+// animate();
