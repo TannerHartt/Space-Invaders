@@ -11,7 +11,6 @@ class Player {
                 x: canvas.width / 2 - this.width / 2,
                 y: canvas.height - this.height - 30
             }
-            this.powerUp = '';
         }
 
         this.velocity = {
@@ -20,6 +19,9 @@ class Player {
         }
         this.rotation = 0;
         this.opacity = 1;
+        this.powerUp = '';
+        this.particles = [];
+        this.frames = 0;
     }
 
     draw() {
@@ -36,6 +38,25 @@ class Player {
         if (this.image) {
             this.draw();
             this.position.x += this.velocity.x;
+        }
+
+        this.frames++;
+        if (this.frames % 3 === 0) {
+            this.particles.push(
+                new Particle({
+                    position: {
+                        x: this.position.x + this.width / 2,
+                        y: this.position.y + this.height
+                    },
+                    velocity: {
+                        x: (Math.random() - 0.5) * 1.5,
+                        y: 1.4
+                    },
+                    radius: Math.random() * 2,
+                    color: 'white',
+                    fades: true
+                })
+            );
         }
     }
 }
@@ -89,7 +110,7 @@ class Invader {
         c.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
     }
 
-    update({velocity}) {
+    update({ velocity }) {
         if (this.image) {
             this.draw();
             this.position.x += velocity.x;
@@ -152,7 +173,7 @@ class Grid {
 
         // Screen boundary collision detection.
         if (this.position.x + this.width >= canvas.width || this.position.x <= 0) {
-            this.velocity.x = -this.velocity.x;
+            this.velocity.x = -this.velocity.x * 1.10; // 1.10 makes the enemies more progressively faster.
 
             this.velocity.y += 30;
         }
