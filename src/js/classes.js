@@ -40,8 +40,9 @@ class Player {
             this.position.x += this.velocity.x;
         }
 
+        if (this.opacity !== 1) return
         this.frames++;
-        if (this.frames % 3 === 0) {
+        if (this.frames % 3 === 0 && !game.over) {
             this.particles.push(
                 new Particle({
                     position: {
