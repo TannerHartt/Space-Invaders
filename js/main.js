@@ -52,6 +52,7 @@ function init() { // Initialization, reset all game variables.
     powerUps = [];
     grids = [];
     score = 0;
+    scoreEl.innerHTML = score;
     frames = 0;
     randomInterval = Math.floor((Math.random() * 500) + 500);
     keys = {
