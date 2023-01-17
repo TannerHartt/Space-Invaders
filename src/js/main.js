@@ -20,10 +20,12 @@ let game = {
 }
 let score = 0;
 let spawnInterval = 500;
+let msPrev = window.performance.now(); // Equal to 100ms
+let fps = 60;
+let fpsInterval = 1000 / fps;
 
 canvas.width = 1024;
 canvas.height = 576;
-
 
 let keys = {
     a: {
@@ -52,7 +54,6 @@ function init() { // Initialization, reset all game variables.
     score = 0;
     frames = 0;
     randomInterval = Math.floor((Math.random() * 500) + 500);
-
     keys = {
         a: {
             pressed: false
@@ -66,13 +67,20 @@ function init() { // Initialization, reset all game variables.
     }
 }
 
-
 // Animation Loop
 function animate() {
     // If the game is not active, return immediately and do not animate.
     if (!game.active) return;
 
     requestAnimationFrame(animate); // Begin animation
+
+    const msNow = window.performance.now();
+    const elapsedTime = msNow - msPrev;
+
+    if (elapsedTime < fpsInterval) return;
+
+    msPrev = msNow - (elapsedTime % fpsInterval);
+
     c.fillStyle = 'black';
     c.fillRect(0, 0, canvas.width, canvas.height);
 
