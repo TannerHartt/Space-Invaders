@@ -63,6 +63,8 @@ addEventListener('keyup', ({ key }) => {
 });
 
 startButton.addEventListener('click', () => {
+    audio.backgroundMusic.play();
+    audio.start.play();
     document.getElementById('startMenu').style.display = 'none';
     document.getElementById('startMenu').style.userSelect = 'none';
     init();
