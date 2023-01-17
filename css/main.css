@@ -71,3 +71,16 @@ body {
 #endGameMenu {
     display: none;
 }
+.game-over {
+    font-size: 24px;
+}
+.points {
+    margin-top: 0;
+    color: white;
+    font-size: 24px
+}
+.gameOverScore {
+    color: white;
+    margin: 10px 0;
+    font-size: 48px
+}
