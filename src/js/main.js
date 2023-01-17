@@ -171,6 +171,7 @@ function animate() {
         if (checkRectangularCollision({ rectangle1: invaderProjectile, rectangle2: player }))
         {
             invaderProjectiles.splice(index, 1);
+            audio.explode.play();
             endGame();
         }
     });
@@ -205,6 +206,7 @@ function animate() {
                 circle1Radius: projectile.radius
             })
             ){
+                audio.bonus.play();
                 projectiles.splice(index, 1); // Remove the projectile from the game
                 powerUps.splice(j, 1); // Remove the power up from the game
                 player.powerUp = 'MachineGun'; // Give player power up
@@ -302,6 +304,7 @@ function animate() {
             // Remove player if invader touches
             if (checkRectangularCollision({ rectangle1: invader, rectangle2: player }) && !game.over)
             {
+                audio.explode.play();
                 endGame();
             }
         } // End of invader grid loop
