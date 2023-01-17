@@ -216,7 +216,8 @@ function endGame() {
     setTimeout(() => {
         game.active = false;
         document.getElementById('endGameMenu').style.display = 'flex';
-        scoreEl.innerHTML = score;
+        document.querySelector('.gameOverScore').innerHTML = score;
+        scoreEl.style.display = 'none';
     }, 2000);
 
     createParticles({
