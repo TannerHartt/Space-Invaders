@@ -68,6 +68,7 @@ class Projectile {
         this.velocity = velocity;
         this.radius = 4;
         this.color = color;
+        audio.shoot.play();
     }
 
     draw() {
@@ -188,6 +189,7 @@ class InvaderProjectile {
 
         this.width = 3;
         this.height = 10;
+        audio.enemyShoot.play();
     }
 
     draw() {
@@ -274,6 +276,7 @@ class Bomb {
     }
 
     explode() {
+        audio.explode.play();
         this.active = true;
         this.velocity.x = 0;
         this.velocity.y = 0;
