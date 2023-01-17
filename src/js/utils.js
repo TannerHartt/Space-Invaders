@@ -179,6 +179,13 @@ function checkRectangularCollision({ rectangle1, rectangle2 }) {
      && rectangle1.position.x <= rectangle2.position.x + rectangle2.width)
 }
 
+function checkCircleToRectangleCollision({ circle, rectangle }) {
+    return (circle.position.y - circle.radius <= rectangle.position.y + rectangle.height
+        && circle.position.x + circle.radius >= rectangle.position.x
+        && circle.position.x - circle.radius <= rectangle.position.x + rectangle.width
+        && circle.position.y + circle.radius >= rectangle.position.y)
+}
+
 /**
  * This function ends the game, removes the player and creates particle effects.
  */
