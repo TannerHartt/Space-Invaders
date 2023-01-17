@@ -173,12 +173,25 @@ function checkCircleToCircleCollision({ circle1, circle2, circle1Radius = circle
         circle1.position.y - circle2.position.y) < circle1Radius + circle2.radius)
 }
 
+/**
+ * This function handles the calculation for collision detection between two rectangle objects.
+ * Both objects must have an x and y coordinate and height and width properties.
+ * @param rectangle1 First rectangle object
+ * @param rectangle2 Second rectangle object
+ * @returns {boolean} Returns true if there's a collision, false otherwise.
+ */
 function checkRectangularCollision({ rectangle1, rectangle2 }) {
  return (rectangle1.position.y + rectangle1.height >= rectangle2.position.y
      && rectangle1.position.x + rectangle1.width >= rectangle2.position.x
      && rectangle1.position.x <= rectangle2.position.x + rectangle2.width)
 }
 
+/**
+ * This function checks collisions between a circle and a rectangle object.
+ * @param circle Circle object that must contain an x and y coordinates and a radius.
+ * @param rectangle Rectangle object that must have x and y coordinates and height and width properties.
+ * @returns {boolean} Returns true if there's a collision, false otherwise.
+ */
 function checkCircleToRectangleCollision({ circle, rectangle }) {
     return (circle.position.y - circle.radius <= rectangle.position.y + rectangle.height
         && circle.position.x + circle.radius >= rectangle.position.x
