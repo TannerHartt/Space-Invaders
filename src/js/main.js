@@ -171,7 +171,7 @@ function animate() {
         if (checkRectangularCollision({ rectangle1: invaderProjectile, rectangle2: player }))
         {
             invaderProjectiles.splice(index, 1);
-            audio.explode.play();
+            audio.gameOver.play();
             endGame();
         }
     });
@@ -192,6 +192,7 @@ function animate() {
 
                 projectiles.splice(index, 1);
                 bomb.explode();
+                audio.bomb.play();
             }
         }
 
@@ -249,6 +250,7 @@ function animate() {
                     score += 50;
                     scoreEl.innerHTML = score;
                     grid.invaders.splice(invaderIndex, 1);
+                    audio.explode.play();
                     createScoreLabel({ object: invader, score: 50 });
                     createParticles({ object: invader, fades: true });
                 }
@@ -279,6 +281,7 @@ function animate() {
                             createScoreLabel({ object: invader });
                             createParticles({ object: invader, fades: true }); // Creates particles when an invader is hit.
 
+                            audio.explode.play();
                             grid.invaders.splice(invaderIndex, 1); // Remove the invader from computation
                             projectiles.splice(projectileIndex, 1); // Remove the bullet from computation
 
@@ -302,7 +305,7 @@ function animate() {
             // Remove player if invader touches
             if (checkRectangularCollision({ rectangle1: invader, rectangle2: player }) && !game.over)
             {
-                audio.explode.play();
+                audio.gameOver.play();
                 endGame();
             }
         } // End of invader grid loop
@@ -332,6 +335,8 @@ function animate() {
     // TODO fix bug where power up is always active.
     // Verified
     if (keys.space.pressed && player.powerUp === 'MachineGun' && frames % 3 === 0 && !game.over) {
+
+        if (frames % 7 === 0) audio.shoot.play();
         projectiles.push(
             new Projectile({
                 position: {

@@ -32,6 +32,7 @@ addEventListener('keydown', ({ key }) => {
         keys.space.pressed = true;
         if (player.powerUp === 'MachineGun') return;
 
+        audio.shoot.play();
         projectiles.push(
               new Projectile({
                     position: {
@@ -64,7 +65,7 @@ addEventListener('keyup', ({ key }) => {
 
 startButton.addEventListener('click', () => {
     audio.backgroundMusic.play();
-    audio.start.play();
+    audio.select.play();
     document.getElementById('startMenu').style.display = 'none';
     document.getElementById('startMenu').style.userSelect = 'none';
     init();
@@ -76,12 +77,11 @@ restartButton.addEventListener('click', () => {
     document.querySelector('#endGameMenu').style.display = 'none';
     document.getElementById('endGameMenu').style.userSelect = 'none';
     scoreEl.style.display = 'block';
+    audio.select.play();
     init();
     spawnBackgroundStars();
     animate();
 });
-
-
 
 /**
  * This function is responsible for spawning the background stars on the canvas.
