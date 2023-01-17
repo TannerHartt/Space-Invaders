@@ -256,11 +256,9 @@ function animate() {
 
             // Projectiles hit invader.
             projectiles.forEach((projectile, projectileIndex) => {
+
                 // If projectile hits invader
-                if (projectile.position.y - projectile.radius <= invader.position.y + invader.height
-                    && projectile.position.x + projectile.radius >= invader.position.x
-                    && projectile.position.x - projectile.radius <= invader.position.x + invader.width
-                    && projectile.position.y + projectile.radius >= invader.position.y) {
+                if (checkCircleToRectangleCollision({ circle: projectile, rectangle: invader })) {
 
                     setTimeout(() => {
 
