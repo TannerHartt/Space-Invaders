@@ -131,6 +131,33 @@ function createParticles({ object, color, fades }) {
   }
 }
 
+
+function spawnPowerUps() {
+    // Rendering power ups on screen
+    for (let i = powerUps.length - 1; i >= 0; i--) {
+        const powerUp = powerUps[i];
+
+        // Power up garbage collection
+        if (powerUp.position.x - powerUp.radius >= canvas.width) {
+            powerUps.splice(i ,1); // Remove from computation
+        } else {
+            powerUp.update(); // Animate power up
+        }
+    }
+}
+
+function spawnBombs() {
+    for (let i = bombs.length - 1; i >= 0; i--) {
+        const bomb = bombs[i];
+
+        if (bomb.opacity <= 0) {
+            bombs.splice(i, 1);
+        } else {
+            bomb.update();
+        }
+    }
+}
+
 /**
  * This function is used to dynamically create score labels at the passed object's location and
  * add them to the DOM. It applies necessary styles and then animates the label to fade away.

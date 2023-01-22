@@ -40,7 +40,7 @@ class Player {
             this.position.x += this.velocity.x;
         }
 
-        if (this.opacity !== 1) return
+        if (this.opacity !== 1) return;
         this.frames++;
         if (this.frames % 3 === 0 && !game.over) {
             this.particles.push(
@@ -59,6 +59,30 @@ class Player {
                 })
             );
         }
+    }
+
+    spawnSprite() {
+        for (let i = this.particles.length - 1; i >=0 ; i--) {
+            const playerParticle = this.particles[i];
+            playerParticle.update();
+
+            if (playerParticle.opacity === 0) this.particles.splice(i, 1);
+        }
+    }
+
+    handleRotation() {
+        // Controls player side-to-side movement and animation
+        if (keys.a.pressed && this.position.x > 0) {
+            this.velocity.x = -5; // Move player left
+            this.rotation = -0.15; // Slight rotation left
+        } else if (keys.d.pressed && this.position.x + this.width <= canvas.width) {
+            this.velocity.x = 5; // Move player right
+            this.rotation = 0.15; // Slight rotation right
+        } else {
+            this.velocity.x = 0; // No movement
+            this.rotation = 0; // No rotation
+        }
+
     }
 }
 

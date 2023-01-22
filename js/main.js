@@ -117,36 +117,11 @@ function animate() {
         );
     }
 
-    // Rendering power ups on screen
-    for (let i = powerUps.length - 1; i >= 0; i--) {
-        const powerUp = powerUps[i];
-
-        // Power up garbage collection
-        if (powerUp.position.x - powerUp.radius >= canvas.width) {
-            powerUps.splice(i ,1); // Remove from computation
-        } else {
-            powerUp.update(); // Animate power up
-        }
-    }
-
-    for (let i = bombs.length - 1; i >= 0; i--) {
-        const bomb = bombs[i];
-
-        if (bomb.opacity <= 0) {
-            bombs.splice(i, 1);
-        } else {
-            bomb.update();
-        }
-    }
+    spawnPowerUps();
+    spawnBombs();
 
     player.update();
-
-    for (let i = player.particles.length - 1; i >=0 ; i--) {
-        const playerParticle = player.particles[i];
-        playerParticle.update();
-
-        if (playerParticle.opacity === 0) player.particles.splice(i, 1);
-    }
+    player.spawnSprite();
 
 
     particles.forEach((particle, particleIndex) => {
@@ -320,17 +295,7 @@ function animate() {
         } // End of invader grid loop
     });
 
-    // Controls player side-to-side movement and animation
-    if (keys.a.pressed && player.position.x > 0) {
-        player.velocity.x = -5; // Move player left
-        player.rotation = -0.15; // Slight rotation left
-    } else if (keys.d.pressed && player.position.x + player.width <= canvas.width) {
-        player.velocity.x = 5; // Move player right
-        player.rotation = 0.15; // Slight rotation right
-    } else {
-        player.velocity.x = 0; // No movement
-        player.rotation = 0; // No rotation
-    }
+    player.handleRotation();
 
     // Spawning invader grids randomly
     if (frames % randomInterval === 0) {
