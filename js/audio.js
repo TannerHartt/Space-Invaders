@@ -1,4 +1,4 @@
-Howler.volume(0.2);
+Howler.volume(0.1);
 const audio = {
     backgroundMusic: new Howl({
         src: './audio/backgroundMusic.wav',
