@@ -66,7 +66,7 @@ class Player {
             const playerParticle = this.particles[i];
             playerParticle.update();
 
-            if (playerParticle.opacity === 0) this.particles.splice(i, 1);
+            if (playerParticle.opacity === 0) this.particles.splice(i, 1); // Garbage collection
         }
     }
 

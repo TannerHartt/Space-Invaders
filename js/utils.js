@@ -131,8 +131,26 @@ function createParticles({ object, color, fades }) {
   }
 }
 
-
 function spawnPowerUps() {
+    // Spawns power ups
+    if (frames % 500 === 0) {
+        powerUps.push(
+            new PowerUp({
+                position: {
+                    x: 0,
+                    y: Math.random() * 300 + PowerUp.radius
+                },
+                velocity: {
+                    x: 4,
+                    y: 0
+                }
+            })
+        );
+    }
+}
+
+
+function renderPowerUps() {
     // Rendering power ups on screen
     for (let i = powerUps.length - 1; i >= 0; i--) {
         const powerUp = powerUps[i];

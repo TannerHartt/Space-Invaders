@@ -66,6 +66,7 @@ function init() { // Initialization, reset all game variables.
             pressed: false
         }
     }
+    spawnBackgroundStars();
 }
 
 // Animation Loop
@@ -101,23 +102,8 @@ function animate() {
         );
     }
 
-    // Spawns power ups
-    if (frames % 500 === 0) {
-        powerUps.push(
-            new PowerUp({
-                position: {
-                    x: 0,
-                    y: Math.random() * 300 + PowerUp.radius
-                },
-                velocity: {
-                    x: 4,
-                    y: 0
-                }
-            })
-        );
-    }
-
     spawnPowerUps();
+    renderPowerUps();
     spawnBombs();
 
     player.update();
@@ -295,6 +281,7 @@ function animate() {
         } // End of invader grid loop
     });
 
+    // Handles player rotation on movement
     player.handleRotation();
 
     // Spawning invader grids randomly
@@ -310,7 +297,9 @@ function animate() {
     // Verified
     if (keys.space.pressed && player.powerUp === 'MachineGun' && frames % 3 === 0 && !game.over) {
 
-        if (frames % 7 === 0) audio.shoot.play();
+        // Limit shooting audio intervals.
+        if (frames % 7 === 0) audio.shoot.play(); // Every 7 frames, play a shooting sound.
+
         projectiles.push(
             new Projectile({
                 position: {
